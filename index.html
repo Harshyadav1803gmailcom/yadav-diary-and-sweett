@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yadav Dairy & Sweets</title>
+  <style>
+    :root {
+      --red: #b22222;
+      --yellow: #f5b700;
+      --cream: #fff8e7;
+      --text: #3b2f2f;
+      --card: #fffdf7;
+      --green: #1f8f4f;
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(180deg, #fff7df, #fff3cd);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 110px;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(140deg, var(--red), #8b0000);
+      color: #fff;
+      text-align: center;
+      padding: 2.2rem 1rem;
+      border-bottom: 5px solid var(--yellow);
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      letter-spacing: 1px;
+    }
+
+    header p {
+      font-size: 1.05rem;
+      margin-top: 0.4rem;
+      color: #ffe9a7;
+    }
+
+    section {
+      padding: 1.5rem 0;
+    }
+
+    .section-title {
+      margin: 1rem 0;
+      color: var(--red);
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      border-left: 6px solid var(--yellow);
+      padding-left: 0.7rem;
+    }
+
+    .category-title {
+      margin: 1.5rem 0 1rem;
+      font-size: 1.15rem;
+      color: #8b0000;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 2px solid #ffd877;
+      border-radius: 14px;
+      padding: 0.95rem;
+      box-shadow: 0 6px 14px rgba(143, 45, 45, 0.1);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 20px rgba(178, 34, 34, 0.25);
+    }
+
+    .card h4 {
+      font-size: 1.05rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .price {
+      color: var(--red);
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .add-btn {
+      width: 100%;
+      background: var(--yellow);
+      color: #3a1d00;
+      padding: 0.6rem 0.65rem;
+    }
+
+    .add-btn:hover {
+      background: #ffca2c;
+      transform: scale(1.02);
+    }
+
+    .floating-cart {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      background: var(--red);
+      color: #fff;
+      border: 3px solid var(--yellow);
+      box-shadow: var(--shadow);
+      z-index: 1000;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -4px;
+      right: -2px;
+      background: var(--yellow);
+      color: #2d1300;
+      font-size: 0.78rem;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+    }
+
+    .cart-panel {
+      position: fixed;
+      right: 1rem;
+      bottom: 4.8rem;
+      width: min(360px, 92vw);
+      max-height: 70vh;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
+      border: 2px solid #ffd877;
+      padding: 1rem;
+      display: none;
+      z-index: 999;
+    }
+
+    .cart-panel.open {
+      display: block;
+      animation: fadeUp 0.25s ease;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 0.45rem;
+      align-items: center;
+      border-bottom: 1px dashed #e2c67c;
+      padding: 0.55rem 0;
+    }
+
+    .remove-btn {
+      background: #ffe8e8;
+      color: #7e0000;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .remove-btn:hover {
+      background: #ffd0d0;
+    }
+
+    .cart-footer {
+      margin-top: 0.8rem;
+      font-weight: 700;
+      color: var(--red);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .checkout {
+      background: rgba(255, 253, 245, 0.95);
+      border: 2px solid #ffd877;
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .field {
+      margin-bottom: 0.75rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+      color: #6b1d1d;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 0.62rem;
+      border: 1px solid #e7c56a;
+      border-radius: 8px;
+      font: inherit;
+      background: #fffef9;
+    }
+
+    textarea {
+      min-height: 78px;
+      resize: vertical;
+    }
+
+    .upi {
+      background: #fff6db;
+      border: 1px dashed #d8a10e;
+      padding: 0.55rem;
+      border-radius: 8px;
+      margin: 0.65rem 0 0.9rem;
+      font-weight: 600;
+    }
+
+    .wa-btn {
+      width: 100%;
+      background: var(--green);
+      color: #fff;
+      padding: 0.75rem;
+      font-size: 1rem;
+    }
+
+    .wa-btn:hover {
+      background: #0f793b;
+    }
+
+    .note {
+      margin-top: 0.5rem;
+      font-size: 0.88rem;
+      color: #6e5a3b;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 560px) {
+      header { padding: 1.6rem 0.8rem; }
+      .cart-item { grid-template-columns: 1fr auto; }
+      .item-price { grid-column: 1 / -1; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Yadav Dairy &amp; Sweets</h1>
+    <p>Fresh • Pure • Desi Taste</p>
+  </header>
+
+  <main class="container">
+    <section>
+      <h2 class="section-title">Our Menu</h2>
+      <div id="menu-root"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Checkout</h2>
+      <div class="checkout">
+        <div class="field">
+          <label for="name">Customer Name</label>
+          <input id="name" type="text" placeholder="Enter your name" />
+        </div>
+        <div class="field">
+          <label for="phone">Phone Number</label>
+          <input id="phone" type="tel" placeholder="Enter your phone number" />
+        </div>
+        <div class="field">
+          <label for="address">Address</label>
+          <textarea id="address" placeholder="Enter delivery address"></textarea>
+        </div>
+        <div class="upi">UPI ID: <strong>yadavdairy@upi</strong></div>
+        <button class="btn wa-btn" id="orderBtn">Place Order via WhatsApp</button>
+        <p class="note">Please review your cart before placing order.</p>
+      </div>
+    </section>
+  </main>
+
+  <button class="btn floating-cart" id="cartToggle" aria-label="Open cart">
+    🛒
+    <span class="cart-count" id="cartCount">0</span>
+  </button>
+
+  <aside class="cart-panel" id="cartPanel">
+    <h3>Your Cart</h3>
+    <div id="cartItems"></div>
+    <div class="cart-footer">
+      <span>Total</span>
+      <span id="cartTotal">₹0</span>
+    </div>
+  </aside>
+
+  <script>
+    const menu = {
+      "Dairy Products": [
+        { name: "Buffalo Milk", price: 60, unit: "litre" },
+        { name: "Fresh Paneer", price: 340, unit: "kg" },
+        { name: "Fresh Dahi", price: 80, unit: "kg" },
+        { name: "Desi Ghee", price: 700, unit: "kg" }
+      ],
+      Sweets: [
+        { name: "Gulab Jamun", price: 220, unit: "kg" },
+        { name: "Rasgulla", price: 220, unit: "kg" },
+        { name: "Jalebi", price: 200, unit: "kg" },
+        { name: "Tiranga Ladoo", price: 220, unit: "kg" },
+        { name: "Besan Ladoo", price: 200, unit: "kg" },
+        { name: "Pista Barfi", price: 520, unit: "kg" }
+      ],
+      "Hot Snacks": [
+        { name: "Samosa", price: 12, unit: "piece" },
+        { name: "Bread Pakoda (Aloo)", price: 20, unit: "piece" },
+        { name: "Bread Pakoda (Paneer)", price: 25, unit: "piece" },
+        { name: "Matar / Seviyan", price: 20, unit: "plate" }
+      ],
+      "Hot Drinks": [
+        { name: "Kadak Chai", price: 15, unit: "cup" }
+      ],
+      "Power Combos": [
+        { name: "Jalebi + Dahi", price: 50, unit: "combo" },
+        { name: "Chai + Samosa", price: 25, unit: "combo" },
+        { name: "Chai + Bread Pakoda", price: 30, unit: "combo" }
+      ]
+    };
+
+    const whatsappNumber = "919999999999"; // Replace with real number
+    const cart = [];
+
+    const menuRoot = document.getElementById("menu-root");
+    const cartItems = document.getElementById("cartItems");
+    const cartTotal = document.getElementById("cartTotal");
+    const cartCount = document.getElementById("cartCount");
+    const cartPanel = document.getElementById("cartPanel");
+
+    function renderMenu() {
+      Object.entries(menu).forEach(([category, items]) => {
+        const title = document.createElement("h3");
+        title.className = "category-title";
+        title.textContent = category;
+
+        const grid = document.createElement("div");
+        grid.className = "menu-grid";
+
+        items.forEach((item) => {
+          const card = document.createElement("article");
+          card.className = "card";
+          card.innerHTML = `
+            <h4>${item.name}</h4>
+            <p class="price">₹${item.price} / ${item.unit}</p>
+            <button class="btn add-btn">Add to Cart</button>
+          `;
+
+          card.querySelector("button").addEventListener("click", () => addToCart(item));
+          grid.appendChild(card);
+        });
+
+        menuRoot.appendChild(title);
+        menuRoot.appendChild(grid);
+      });
+    }
+
+    function addToCart(item) {
+      const found = cart.find((entry) => entry.name === item.name);
+      if (found) {
+        found.qty += 1;
+      } else {
+        cart.push({ ...item, qty: 1 });
+      }
+      renderCart();
+    }
+
+    function removeFromCart(name) {
+      const index = cart.findIndex((entry) => entry.name === name);
+      if (index > -1) {
+        if (cart[index].qty > 1) {
+          cart[index].qty -= 1;
+        } else {
+          cart.splice(index, 1);
+        }
+      }
+      renderCart();
+    }
+
+    function renderCart() {
+      cartItems.innerHTML = "";
+      let total = 0;
+      let count = 0;
+
+      if (!cart.length) {
+        cartItems.innerHTML = "<p>Your cart is empty.</p>";
+      }
+
+      cart.forEach((item) => {
+        const lineTotal = item.price * item.qty;
+        total += lineTotal;
+        count += item.qty;
+
+        const row = document.createElement("div");
+        row.className = "cart-item";
+        row.innerHTML = `
+          <div>
+            <strong>${item.name}</strong> x ${item.qty}
+            <div class="item-price">₹${lineTotal}</div>
+          </div>
+          <button class="btn remove-btn">Remove</button>
+        `;
+        row.querySelector("button").addEventListener("click", () => removeFromCart(item.name));
+        cartItems.appendChild(row);
+      });
+
+      cartTotal.textContent = `₹${total}`;
+      cartCount.textContent = count;
+    }
+
+    document.getElementById("cartToggle").addEventListener("click", () => {
+      cartPanel.classList.toggle("open");
+    });
+
+    document.getElementById("orderBtn").addEventListener("click", () => {
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const address = document.getElementById("address").value.trim();
+
+      if (!name || !phone || !address) {
+        alert("Please fill in name, phone, and address before checkout.");
+        return;
+      }
+
+      if (cart.length === 0) {
+        alert("Your cart is empty. Please add items first.");
+        return;
+      }
+
+      let total = 0;
+      const lines = cart.map((item) => {
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+        return `• ${item.name} x ${item.qty} = ₹${itemTotal}`;
+      });
+
+      const message = [
+        "Namaste! I want to place an order from Yadav Dairy & Sweets:",
+        "",
+        ...lines,
+        "",
+        `Total: ₹${total}`,
+        "",
+        `Name: ${name}`,
+        `Phone: ${phone}`,
+        `Address: ${address}`
+      ].join("\n");
+
+      const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank");
+    });
+
+    renderMenu();
+    renderCart();
+  </script>
+</body>
+</html>
